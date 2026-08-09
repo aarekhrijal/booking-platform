@@ -1,18 +1,50 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 function App() {
-  const [message, setMessage] = useState('Loading...')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [result, setResult] = useState(null)
 
-  useEffect(() => {
-    fetch('http://localhost:5000/api/hello')
-      .then(res => res.json())
-      .then(data => setMessage(data.message))
-      .catch(err => setMessage('Error: ' + err.message))
-  }, [])
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    const response = await fetch('http://localhost:5000/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password })
+    })
+
+    const data = await response.json()
+    setResult(data)
+  }
 
   return (
     <div>
-      <h1>{message}</h1>
+      <h1>Sign Up</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">Register</button>
+      </form>
+
+      {result && <pre>{JSON.stringify(result, null, 2)}</pre>}
     </div>
   )
 }
