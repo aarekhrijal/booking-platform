@@ -13,6 +13,28 @@ app.get('/api/hello', (req, res) => {
 });
 
 
+function requireAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
+}
+
+app.get('/api/auth/me', requireAuth, (req, res) => {
+  res.json({ userId: req.user.userId, role: req.user.role });
+});
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
@@ -40,6 +62,32 @@ app.post('/api/auth/register', async (req, res) => {
   );
 
   res.status(201).json({
+    token,
+    user: { id: user.id, name: user.name, email: user.email, role: user.role }
+  });
+});
+
+
+app.post('/api/auth/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid email or password' });
+  }
+
+  const passwordMatches = await bcrypt.compare(password, user.password);
+  if (!passwordMatches) {
+    return res.status(401).json({ error: 'Invalid email or password' });
+  }
+
+  const token = jwt.sign(
+    { userId: user.id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+
+  res.json({
     token,
     user: { id: user.id, name: user.name, email: user.email, role: user.role }
   });
