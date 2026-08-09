@@ -17,6 +17,16 @@ model User {
   createdAt DateTime @default(now())
 }
 
+model Service {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  duration    Int
+  price       Float
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
 enum Role {
   CUSTOMER
   ADMIN

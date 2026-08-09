@@ -31,6 +31,13 @@ function requireAuth(req, res, next) {
   }
 }
 
+function requireAdmin(req, res, next) {
+  if (req.user.role !== 'ADMIN') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+  next();
+}
+
 app.get('/api/auth/me', requireAuth, (req, res) => {
   res.json({ userId: req.user.userId, role: req.user.role });
 });
@@ -95,4 +102,22 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+});
+
+
+app.get('/api/services', async (req, res) => {
+  const services = await prisma.service.findMany({
+    where: { isActive: true }
+  });
+  res.json(services);
+});
+
+app.post('/api/services', requireAuth, requireAdmin, async (req, res) => {
+  const { name, description, duration, price } = req.body;
+
+  const service = await prisma.service.create({
+    data: { name, description, duration, price }
+  });
+
+  res.status(201).json(service);
 });
