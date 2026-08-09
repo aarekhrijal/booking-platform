@@ -1,34 +1,82 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 function App() {
+  const [mode, setMode] = useState('register') // 'register' or 'login'
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [result, setResult] = useState(null)
+  const [error, setError] = useState('')
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user')
+    if (savedUser) {
+      setUser(JSON.parse(savedUser))
+    }
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
 
-    const response = await fetch('http://localhost:5000/api/auth/register', {
+    const url = mode === 'register'
+      ? 'http://localhost:5000/api/auth/register'
+      : 'http://localhost:5000/api/auth/login'
+
+    const body = mode === 'register'
+      ? { name, email, password }
+      : { email, password }
+
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password })
+      body: JSON.stringify(body)
     })
 
     const data = await response.json()
-    setResult(data)
+
+    if (!response.ok) {
+      setError(data.error)
+      return
+    }
+
+    localStorage.setItem('token', data.token)
+    localStorage.setItem('user', JSON.stringify(data.user))
+    setUser(data.user)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    setUser(null)
+  }
+
+  if (user) {
+    return (
+      <div>
+        <h1>Welcome, {user.name}</h1>
+        <p>Role: {user.role}</p>
+        <button onClick={handleLogout}>Log out</button>
+      </div>
+    )
   }
 
   return (
     <div>
-      <h1>Sign Up</h1>
+      <h1>{mode === 'register' ? 'Sign Up' : 'Log In'}</h1>
+
+      <button onClick={() => setMode('register')}>Register</button>
+      <button onClick={() => setMode('login')}>Log In</button>
+
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+        {mode === 'register' && (
+          <input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        )}
         <input
           type="email"
           placeholder="Email"
@@ -41,10 +89,12 @@ function App() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit">Register</button>
+        <button type="submit">
+          {mode === 'register' ? 'Register' : 'Log In'}
+        </button>
       </form>
 
-      {result && <pre>{JSON.stringify(result, null, 2)}</pre>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   )
 }
