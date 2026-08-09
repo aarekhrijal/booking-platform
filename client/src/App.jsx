@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import HomePage from './pages/HomePage'
+import RegisterPage from './pages/RegisterPage'
+import LoginPage from './pages/LoginPage'
+import ServicesPage from './pages/ServicesPage'
 
 function App() {
-  const [mode, setMode] = useState('register') // 'register' or 'login'
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
   const [user, setUser] = useState(null)
 
   useEffect(() => {
@@ -15,31 +15,7 @@ function App() {
     }
   }, [])
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-
-    const url = mode === 'register'
-      ? 'http://localhost:5000/api/auth/register'
-      : 'http://localhost:5000/api/auth/login'
-
-    const body = mode === 'register'
-      ? { name, email, password }
-      : { email, password }
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    })
-
-    const data = await response.json()
-
-    if (!response.ok) {
-      setError(data.error)
-      return
-    }
-
+  const handleAuth = (data) => {
     localStorage.setItem('token', data.token)
     localStorage.setItem('user', JSON.stringify(data.user))
     setUser(data.user)
@@ -51,51 +27,15 @@ function App() {
     setUser(null)
   }
 
-  if (user) {
-    return (
-      <div>
-        <h1>Welcome, {user.name}</h1>
-        <p>Role: {user.role}</p>
-        <button onClick={handleLogout}>Log out</button>
-      </div>
-    )
-  }
-
   return (
-    <div>
-      <h1>{mode === 'register' ? 'Sign Up' : 'Log In'}</h1>
-
-      <button onClick={() => setMode('register')}>Register</button>
-      <button onClick={() => setMode('login')}>Log In</button>
-
-      <form onSubmit={handleSubmit}>
-        {mode === 'register' && (
-          <input
-            type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        )}
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">
-          {mode === 'register' ? 'Register' : 'Log In'}
-        </button>
-      </form>
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage user={user} onLogout={handleLogout} />} />
+        <Route path="/register" element={<RegisterPage onAuth={handleAuth} />} />
+        <Route path="/login" element={<LoginPage onAuth={handleAuth} />} />
+        <Route path="/services" element={<ServicesPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
