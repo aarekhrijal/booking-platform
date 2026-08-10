@@ -7,6 +7,7 @@ import ServicesPage from './pages/ServicesPage'
 import BookingPage from './pages/BookingPage'
 import MyBookingsPage from './pages/MyBookingsPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
+import AdminServicesPage from './pages/AdminServicesPage'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -39,6 +40,7 @@ function App() {
         <Route path="/book" element={<BookingPage />} />
         <Route path="/my-bookings" element={<MyBookingsPage />} />
         <Route path="/admin" element={<AdminDashboardPage />} />
+        <Route path="/admin/services" element={<AdminServicesPage />} />
         <Route path="/services" element={<ServicesPage />} />
       </Routes>
     </BrowserRouter>
