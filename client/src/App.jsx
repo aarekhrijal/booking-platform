@@ -5,6 +5,8 @@ import RegisterPage from './pages/RegisterPage'
 import LoginPage from './pages/LoginPage'
 import ServicesPage from './pages/ServicesPage'
 import BookingPage from './pages/BookingPage'
+import MyBookingsPage from './pages/MyBookingsPage'
+import AdminDashboardPage from './pages/AdminDashboardPage'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -35,6 +37,8 @@ function App() {
         <Route path="/register" element={<RegisterPage onAuth={handleAuth} />} />
         <Route path="/login" element={<LoginPage onAuth={handleAuth} />} />
         <Route path="/book" element={<BookingPage />} />
+        <Route path="/my-bookings" element={<MyBookingsPage />} />
+        <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/services" element={<ServicesPage />} />
       </Routes>
     </BrowserRouter>

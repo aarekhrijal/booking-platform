@@ -244,3 +244,61 @@ app.post('/api/bookings', requireAuth, async (req, res) => {
   res.status(201).json(booking);
 });
 
+
+app.get('/api/bookings/my', requireAuth, async (req, res) => {
+  const bookings = await prisma.booking.findMany({
+    where: { customerId: req.user.userId },
+    include: { service: true },
+    orderBy: { date: 'asc' }
+  });
+  res.json(bookings);
+});
+
+app.put('/api/bookings/:id/cancel', requireAuth, async (req, res) => {
+  const booking = await prisma.booking.findUnique({ where: { id: Number(req.params.id) } });
+
+  if (!booking) {
+    return res.status(404).json({ error: 'Booking not found' });
+  }
+  if (booking.customerId !== req.user.userId) {
+    return res.status(403).json({ error: 'This is not your booking' });
+  }
+
+  const updated = await prisma.booking.update({
+    where: { id: booking.id },
+    data: { status: 'CANCELLED' }
+  });
+
+  res.json(updated);
+});
+
+app.get('/api/dashboard/stats', requireAuth, requireAdmin, async (req, res) => {
+  const totalBookings = await prisma.booking.count();
+  const pendingBookings = await prisma.booking.count({ where: { status: 'PENDING' } });
+  const cancelledBookings = await prisma.booking.count({ where: { status: 'CANCELLED' } });
+
+  const completedBookings = await prisma.booking.findMany({
+    where: { status: 'COMPLETED' },
+    include: { service: true }
+  });
+  const revenue = completedBookings.reduce((sum, b) => sum + b.totalPrice, 0);
+
+  res.json({ totalBookings, pendingBookings, cancelledBookings, revenue });
+});
+
+app.get('/api/bookings', requireAuth, requireAdmin, async (req, res) => {
+  const bookings = await prisma.booking.findMany({
+    include: { service: true, customer: true },
+    orderBy: { date: 'asc' }
+  });
+  res.json(bookings);
+});
+
+app.put('/api/bookings/:id/complete', requireAuth, requireAdmin, async (req, res) => {
+  const updated = await prisma.booking.update({
+    where: { id: Number(req.params.id) },
+    data: { status: 'COMPLETED' }
+  });
+  res.json(updated);
+});
+
