@@ -158,14 +158,12 @@ function minutesToTime(mins) {
 
 app.get('/api/availability', async (req, res) => {
   const { date, serviceId } = req.query;
-
   const service = await prisma.service.findUnique({ where: { id: Number(serviceId) } });
   if (!service) {
     return res.status(404).json({ error: 'Service not found' });
   }
 
   const dayOfWeek = new Date(date).getDay();
-
   const workingHours = await prisma.workingHours.findUnique({ where: { dayOfWeek } });
   if (!workingHours || !workingHours.isOpen) {
     return res.json([]);
@@ -175,11 +173,74 @@ app.get('/api/availability', async (req, res) => {
   const closeMinutes = timeToMinutes(workingHours.endTime);
   const duration = service.duration;
 
+  const existingBookings = await prisma.booking.findMany({
+    where: { date: new Date(date), status: { not: 'CANCELLED' } }
+  });
+
   const slots = [];
   for (let start = openMinutes; start + duration <= closeMinutes; start += 30) {
-    slots.push(minutesToTime(start));
+    const end = start + duration;
+
+    const hasConflict = existingBookings.some(booking => {
+      const bStart = timeToMinutes(booking.startTime);
+      const bEnd = timeToMinutes(booking.endTime);
+      return bStart < end && start < bEnd;
+    });
+
+    if (!hasConflict) {
+      slots.push(minutesToTime(start));
+    }
   }
 
   res.json(slots);
+});
+
+app.post('/api/bookings', requireAuth, async (req, res) => {
+  const { serviceId, date, startTime } = req.body;
+
+  const service = await prisma.service.findUnique({ where: { id: Number(serviceId) } });
+  if (!service) return res.status(404).json({ error: 'Service not found' });
+
+  const dayOfWeek = new Date(date).getDay();
+  const workingHours = await prisma.workingHours.findUnique({ where: { dayOfWeek } });
+  if (!workingHours || !workingHours.isOpen) {
+    return res.status(400).json({ error: 'Business is closed on this day' });
+  }
+
+  const startMinutes = timeToMinutes(startTime);
+  const endMinutes = startMinutes + service.duration;
+  const openMinutes = timeToMinutes(workingHours.startTime);
+  const closeMinutes = timeToMinutes(workingHours.endTime);
+
+  if (startMinutes < openMinutes || endMinutes > closeMinutes) {
+    return res.status(400).json({ error: 'Selected time is outside working hours' });
+  }
+
+  const existingBookings = await prisma.booking.findMany({
+    where: { date: new Date(date), status: { not: 'CANCELLED' } }
+  });
+
+  const hasConflict = existingBookings.some(booking => {
+    const bStart = timeToMinutes(booking.startTime);
+    const bEnd = timeToMinutes(booking.endTime);
+    return bStart < endMinutes && startMinutes < bEnd;
+  });
+
+  if (hasConflict) {
+    return res.status(409).json({ error: 'This time slot is no longer available' });
+  }
+
+  const booking = await prisma.booking.create({
+    data: {
+      customerId: req.user.userId,
+      serviceId: service.id,
+      date: new Date(date),
+      startTime,
+      endTime: minutesToTime(endMinutes),
+      totalPrice: service.price
+    }
+  });
+
+  res.status(201).json(booking);
 });
 
