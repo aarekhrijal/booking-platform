@@ -9,6 +9,7 @@ import MyBookingsPage from './pages/MyBookingsPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
 import AdminServicesPage from './pages/AdminServicesPage'
 import AdminSchedulePage from './pages/AdminSchedulePage'
+import Navbar from './components/Navbar'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -34,6 +35,7 @@ function App() {
 
   return (
     <BrowserRouter>
+    <Navbar user={user} onLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<HomePage user={user} onLogout={handleLogout} />} />
         <Route path="/register" element={<RegisterPage onAuth={handleAuth} />} />
@@ -48,5 +50,7 @@ function App() {
     </BrowserRouter>
   )
 }
+
+
 
 export default App
