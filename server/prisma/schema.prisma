@@ -27,6 +27,16 @@ model Service {
   createdAt   DateTime @default(now())
 }
 
+
+model WorkingHours {
+  id        Int      @id @default(autoincrement())
+  dayOfWeek Int      @unique
+  startTime String
+  endTime   String
+  isOpen    Boolean  @default(true)
+}
+
+
 enum Role {
   CUSTOMER
   ADMIN

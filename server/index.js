@@ -121,3 +121,65 @@ app.post('/api/services', requireAuth, requireAdmin, async (req, res) => {
 
   res.status(201).json(service);
 });
+
+app.get('/api/schedule/working-hours', async (req, res) => {
+  const hours = await prisma.workingHours.findMany({
+    orderBy: { dayOfWeek: 'asc' }
+  });
+  res.json(hours);
+});
+
+app.put('/api/schedule/working-hours', requireAuth, requireAdmin, async (req, res) => {
+  const { hours } = req.body;
+  const updated = [];
+
+  for (const day of hours) {
+    const result = await prisma.workingHours.upsert({
+      where: { dayOfWeek: day.dayOfWeek },
+      update: { startTime: day.startTime, endTime: day.endTime, isOpen: day.isOpen },
+      create: { dayOfWeek: day.dayOfWeek, startTime: day.startTime, endTime: day.endTime, isOpen: day.isOpen }
+    });
+    updated.push(result);
+  }
+
+  res.json(updated);
+});
+
+function timeToMinutes(time) {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
+function minutesToTime(mins) {
+  const hours = Math.floor(mins / 60);
+  const minutes = mins % 60;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
+
+app.get('/api/availability', async (req, res) => {
+  const { date, serviceId } = req.query;
+
+  const service = await prisma.service.findUnique({ where: { id: Number(serviceId) } });
+  if (!service) {
+    return res.status(404).json({ error: 'Service not found' });
+  }
+
+  const dayOfWeek = new Date(date).getDay();
+
+  const workingHours = await prisma.workingHours.findUnique({ where: { dayOfWeek } });
+  if (!workingHours || !workingHours.isOpen) {
+    return res.json([]);
+  }
+
+  const openMinutes = timeToMinutes(workingHours.startTime);
+  const closeMinutes = timeToMinutes(workingHours.endTime);
+  const duration = service.duration;
+
+  const slots = [];
+  for (let start = openMinutes; start + duration <= closeMinutes; start += 30) {
+    slots.push(minutesToTime(start));
+  }
+
+  res.json(slots);
+});
+
