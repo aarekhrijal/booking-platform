@@ -3,10 +3,10 @@ function HomePage({ user, onLogout }) {
   if (!user) {
     return (
       <div className="max-w-3xl mx-auto px-6 py-16 text-center">
-        <h1 className="text-3xl font-bold text-slate-100">
-          Welcome to the booking platform
-        </h1>
-        <p className="mt-2 text-slate-400">Please log in or register to get started.</p>
+<h1 className="text-3xl font-bold text-slate-100">
+  Welcome to Rijal's Handsome Parlor
+</h1>
+<p className="mt-2 text-slate-400">Book your appointment online</p>
       </div>
     )
   }

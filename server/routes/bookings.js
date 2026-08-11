@@ -2,12 +2,17 @@ const express = require('express');
 const prisma = require('../prisma-client/client');
 const requireAuth = require('../middleware/requireAuth');
 const requireAdmin = require('../middleware/requireAdmin');
+const optionalAuth = require('../middleware/optionalAuth');
 const { timeToMinutes, minutesToTime } = require('../utils/time');
 
 const router = express.Router();
 
-router.post('/', requireAuth, async (req, res) => {
-  const { serviceId, date, startTime } = req.body;
+router.post('/', optionalAuth, async (req, res) => {
+  const { serviceId, date, startTime, guestName, guestEmail, guestPhone } = req.body;
+
+  if (!req.user && (!guestName || !guestEmail || !guestPhone)) {
+    return res.status(400).json({ error: 'Please provide your name, email, and phone number' });
+  }
 
   const service = await prisma.service.findUnique({ where: { id: Number(serviceId) } });
   if (!service) return res.status(404).json({ error: 'Service not found' });
@@ -41,12 +46,15 @@ router.post('/', requireAuth, async (req, res) => {
 
   const booking = await prisma.booking.create({
     data: {
-      customerId: req.user.userId,
+      customerId: req.user ? req.user.userId : null,
       serviceId: service.id,
       date: new Date(date),
       startTime,
       endTime: minutesToTime(endMinutes),
-      totalPrice: service.price
+      totalPrice: service.price,
+      guestName: req.user ? null : guestName,
+      guestEmail: req.user ? null : guestEmail,
+      guestPhone: req.user ? null : guestPhone
     }
   });
 

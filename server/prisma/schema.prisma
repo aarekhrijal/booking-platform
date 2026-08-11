@@ -43,16 +43,19 @@ model WorkingHours {
 
 model Booking {
   id          Int           @id @default(autoincrement())
-  customerId  Int
+  customerId  Int?
   serviceId   Int
   date        DateTime
   startTime   String
   endTime     String
   status      BookingStatus @default(CONFIRMED)
   totalPrice  Float
+  guestName   String?
+  guestEmail  String?
+  guestPhone  String?
   createdAt   DateTime      @default(now())
 
-  customer User    @relation(fields: [customerId], references: [id])
+  customer User?   @relation(fields: [customerId], references: [id])
   service  Service @relation(fields: [serviceId], references: [id])
 }
 

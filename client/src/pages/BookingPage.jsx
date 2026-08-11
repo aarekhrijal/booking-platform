@@ -8,6 +8,10 @@ function BookingPage() {
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [confirmation, setConfirmation] = useState(null)
   const [error, setError] = useState('')
+  const [guestName, setGuestName] = useState('')
+const [guestEmail, setGuestEmail] = useState('')
+const [guestPhone, setGuestPhone] = useState('')
+const isLoggedIn = !!localStorage.getItem('token')
 
   useEffect(() => {
     fetch('http://localhost:5000/api/services')
@@ -36,11 +40,14 @@ function BookingPage() {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({
-        serviceId: Number(selectedService),
-        date,
-        startTime: selectedSlot
-      })
+body: JSON.stringify({
+  serviceId: Number(selectedService),
+  date,
+  startTime: selectedSlot,
+  guestName,
+  guestEmail,
+  guestPhone
+})
     })
 
     const data = await response.json()
@@ -51,17 +58,6 @@ function BookingPage() {
     }
 
     setConfirmation(data)
-  }
-
-  if (confirmation) {
-    return (
-      <div>
-        <h1>Booking Confirmed!</h1>
-        <p>Date: {confirmation.date.slice(0, 10)}</p>
-        <p>Time: {confirmation.startTime}</p>
-        <p>Status: {confirmation.status}</p>
-      </div>
-    )
   }
 
   // BookingPage.jsx — replace just the returned JSX (everything above it stays as-is)
@@ -120,14 +116,37 @@ return (
       ))}
     </div>
 
-    {selectedSlot && (
-      <button
-        onClick={handleBook}
-        className="mt-6 bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-500 w-full"
-      >
-        Confirm booking for {selectedSlot}
-      </button>
-    )}
+{!isLoggedIn && selectedSlot && (
+  <div className="flex flex-col gap-3 mt-6">
+    <input
+      placeholder="Your Name"
+      value={guestName}
+      onChange={(e) => setGuestName(e.target.value)}
+      className="bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100"
+    />
+    <input
+      placeholder="Email"
+      value={guestEmail}
+      onChange={(e) => setGuestEmail(e.target.value)}
+      className="bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100"
+    />
+    <input
+      placeholder="Phone Number"
+      value={guestPhone}
+      onChange={(e) => setGuestPhone(e.target.value)}
+      className="bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100"
+    />
+  </div>
+)}
+
+{selectedSlot && (
+  <button
+    onClick={handleBook}
+    className="mt-6 bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-500 w-full"
+  >
+    Confirm booking for {selectedSlot}
+  </button>
+)}
 
     {error && <p className="text-red-400 mt-3">{error}</p>}
   </div>

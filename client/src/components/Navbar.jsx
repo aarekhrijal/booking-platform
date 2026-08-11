@@ -4,8 +4,10 @@ function Navbar({ user, onLogout }) {
   return (
     <nav className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
       <div className="flex gap-6">
-        <Link to="/" className="font-bold text-lg">BookIt</Link>
-        <Link to="/services" className="hover:text-slate-300">Services</Link>
+<Link to="/" className="flex items-center gap-2">
+  <img src="/logo.png" alt="Rijal's Handsome Parlor" className="h-8" />
+</Link>       
+ <Link to="/services" className="hover:text-slate-300">Services</Link>
       </div>
 
       <div className="flex items-center gap-4">
