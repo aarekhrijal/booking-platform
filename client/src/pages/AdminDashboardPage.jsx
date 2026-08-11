@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Badge } from '@/components/ui/badge'
 
 function AdminDashboardPage() {
   const [stats, setStats] = useState(null)
@@ -27,8 +28,6 @@ function AdminDashboardPage() {
     })
     loadData()
   }
-
-  if (!stats) return <p>Loading dashboard...</p>
 
 if (!stats) return <p className="text-center mt-16 text-slate-400">Loading dashboard...</p>
 
@@ -61,7 +60,14 @@ return (
         <div key={b.id} className="bg-slate-800 border border-slate-700 rounded-lg p-4 flex justify-between items-center">
           <div>
             <p className="text-slate-100">{b.customer.name} — {b.service.name}</p>
-            <p className="text-slate-400 text-sm">{b.date.slice(0, 10)} at {b.startTime} — {b.status}</p>
+            <p className="text-slate-400 text-sm">{b.date.slice(0, 10)} at {b.startTime}</p>
+<Badge variant={
+  b.status === 'CONFIRMED' ? 'default' :
+  b.status === 'CANCELLED' ? 'destructive' :
+  'secondary'
+} className="mt-1">
+  {b.status}
+</Badge>
           </div>
           {b.status === 'CONFIRMED' && (
             <button onClick={() => handleComplete(b.id)} className="bg-slate-700 text-slate-100 text-sm px-3 py-1.5 rounded hover:bg-slate-600">

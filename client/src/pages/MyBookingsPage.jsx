@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Badge } from '@/components/ui/badge'
 
 function MyBookingsPage() {
   const [bookings, setBookings] = useState([])
@@ -43,13 +44,13 @@ return (
           <div>
             <h3 className="text-slate-100 font-semibold">{booking.service.name}</h3>
             <p className="text-slate-400 text-sm">{booking.date.slice(0, 10)} at {booking.startTime}</p>
-            <span className={`text-xs px-2 py-0.5 rounded inline-block mt-1 ${
-              booking.status === 'CONFIRMED' ? 'bg-green-900 text-green-300' :
-              booking.status === 'CANCELLED' ? 'bg-red-900 text-red-300' :
-              'bg-slate-700 text-slate-300'
-            }`}>
-              {booking.status}
-            </span>
+            <Badge variant={
+  booking.status === 'CONFIRMED' ? 'default' :
+  booking.status === 'CANCELLED' ? 'destructive' :
+  'secondary'
+}>
+  {booking.status}
+</Badge>
           </div>
           {booking.status === 'CONFIRMED' && (
             <button onClick={() => handleCancel(booking.id)} className="text-red-400 hover:underline text-sm">
