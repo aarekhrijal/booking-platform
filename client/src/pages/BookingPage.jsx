@@ -64,11 +64,30 @@ function BookingPage() {
     )
   }
 
+  // BookingPage.jsx — replace just the returned JSX (everything above it stays as-is)
+if (confirmation) {
   return (
-    <div>
-      <h1>Book an Appointment</h1>
+    <div className="max-w-md mx-auto px-6 py-16 text-center">
+      <h1 className="text-2xl font-bold text-slate-100">Booking Confirmed!</h1>
+      <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 mt-6 text-left">
+        <p className="text-slate-300">Date: {confirmation.date.slice(0, 10)}</p>
+        <p className="text-slate-300">Time: {confirmation.startTime}</p>
+        <p className="text-slate-300">Status: {confirmation.status}</p>
+      </div>
+    </div>
+  )
+}
 
-      <select value={selectedService} onChange={(e) => { setSelectedService(e.target.value); setSelectedSlot(null) }}>
+return (
+  <div className="max-w-xl mx-auto px-6 py-12">
+    <h1 className="text-2xl font-bold text-slate-100 mb-6">Book an Appointment</h1>
+
+    <div className="flex flex-col gap-3">
+      <select
+        value={selectedService}
+        onChange={(e) => { setSelectedService(e.target.value); setSelectedSlot(null) }}
+        className="bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100"
+      >
         <option value="">-- Choose a service --</option>
         {services.map(service => (
           <option key={service.id} value={service.id}>
@@ -81,27 +100,38 @@ function BookingPage() {
         type="date"
         value={date}
         onChange={(e) => { setDate(e.target.value); setSelectedSlot(null) }}
+        className="bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100"
       />
-
-      <div>
-        {slots.map(slot => (
-          <button
-            key={slot}
-            onClick={() => setSelectedSlot(slot)}
-            style={{ fontWeight: selectedSlot === slot ? 'bold' : 'normal' }}
-          >
-            {slot}
-          </button>
-        ))}
-      </div>
-
-      {selectedSlot && (
-        <button onClick={handleBook}>Confirm booking for {selectedSlot}</button>
-      )}
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
-  )
+
+    <div className="grid grid-cols-4 gap-2 mt-6">
+      {slots.map(slot => (
+        <button
+          key={slot}
+          onClick={() => setSelectedSlot(slot)}
+          className={`px-3 py-2 rounded border ${
+            selectedSlot === slot
+              ? 'bg-blue-600 border-blue-500 text-white'
+              : 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700'
+          }`}
+        >
+          {slot}
+        </button>
+      ))}
+    </div>
+
+    {selectedSlot && (
+      <button
+        onClick={handleBook}
+        className="mt-6 bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-500 w-full"
+      >
+        Confirm booking for {selectedSlot}
+      </button>
+    )}
+
+    {error && <p className="text-red-400 mt-3">{error}</p>}
+  </div>
+)
 }
 
 export default BookingPage

@@ -28,18 +28,34 @@ function LoginPage({ onAuth }) {
     navigate('/')
   }
 
-  return (
-    <div>
-      <h1>Log In</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button type="submit">Log In</button>
-      </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <p>Don't have an account? <Link to="/register">Register</Link></p>
-    </div>
-  )
+return (
+  <div className="max-w-sm mx-auto px-6 py-16">
+    <h1 className="text-2xl font-bold text-slate-100 mb-6">Log In</h1>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100 placeholder-slate-500"
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100 placeholder-slate-500"
+      />
+      <button type="submit" className="bg-blue-600 text-white rounded px-3 py-2 hover:bg-blue-500 mt-2">
+        Log In
+      </button>
+    </form>
+    {error && <p className="text-red-400 mt-3">{error}</p>}
+    <p className="text-slate-400 mt-4 text-sm">
+      Don't have an account? <Link to="/register" className="text-blue-400 hover:underline">Register</Link>
+    </p>
+  </div>
+)
 }
 
 export default LoginPage

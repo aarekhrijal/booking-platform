@@ -48,15 +48,16 @@ function AdminSchedulePage() {
     setTimeout(() => setSaved(false), 2000)
   }
 
-  return (
-    <div>
-      <h1>Working Hours</h1>
+return (
+  <div className="max-w-xl mx-auto px-6 py-12">
+    <h1 className="text-2xl font-bold text-slate-100 mb-6">Working Hours</h1>
 
+    <div className="grid gap-2">
       {hours.map(day => (
-        <div key={day.dayOfWeek}>
-          <span>{DAY_NAMES[day.dayOfWeek]}</span>
+        <div key={day.dayOfWeek} className="bg-slate-800 border border-slate-700 rounded-lg p-3 flex items-center gap-4">
+          <span className="text-slate-100 w-24">{DAY_NAMES[day.dayOfWeek]}</span>
 
-          <label>
+          <label className="flex items-center gap-1.5 text-slate-300 text-sm">
             <input
               type="checkbox"
               checked={day.isOpen}
@@ -71,22 +72,28 @@ function AdminSchedulePage() {
                 type="time"
                 value={day.startTime}
                 onChange={(e) => updateDay(day.dayOfWeek, 'startTime', e.target.value)}
+                className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-100 text-sm"
               />
-              <span> to </span>
+              <span className="text-slate-500">to</span>
               <input
                 type="time"
                 value={day.endTime}
                 onChange={(e) => updateDay(day.dayOfWeek, 'endTime', e.target.value)}
+                className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-100 text-sm"
               />
             </>
           )}
         </div>
       ))}
-
-      <button onClick={handleSave}>Save Schedule</button>
-      {saved && <p>Saved!</p>}
     </div>
-  )
+
+    <button onClick={handleSave} className="mt-6 bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-500">
+      Save Schedule
+    </button>
+    {saved && <p className="text-green-400 mt-2">Saved!</p>}
+  </div>
+)
+
 }
 
 export default AdminSchedulePage
