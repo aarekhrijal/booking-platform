@@ -21,6 +21,11 @@ function AdminDashboardPage() {
     loadData()
   }, [])
 
+  const isPastDue = (booking) => {
+  const bookingDateTime = new Date(`${booking.date.slice(0, 10)}T${booking.startTime}`)
+  return bookingDateTime < new Date() && booking.status === 'CONFIRMED'
+}
+
   const handleComplete = async (id) => {
     await fetch(`http://localhost:5000/api/bookings/${id}/complete`, {
       method: 'PUT',
@@ -28,6 +33,14 @@ function AdminDashboardPage() {
     })
     loadData()
   }
+
+  const handleNoShow = async (id) => {
+  await fetch(`http://localhost:5000/api/bookings/${id}/no-show`, {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+  loadData()
+}
 
 if (!stats) return <p className="text-center mt-16 text-slate-400">Loading dashboard...</p>
 
@@ -56,26 +69,37 @@ return (
 
     <h2 className="text-lg font-semibold text-slate-100 mb-3">All Bookings</h2>
     <div className="grid gap-3">
-      {bookings.map(b => (
-        <div key={b.id} className="bg-slate-800 border border-slate-700 rounded-lg p-4 flex justify-between items-center">
-          <div>
-            <p className="text-slate-100">{b.customer.name} — {b.service.name}</p>
-            <p className="text-slate-400 text-sm">{b.date.slice(0, 10)} at {b.startTime}</p>
-<Badge variant={
-  b.status === 'CONFIRMED' ? 'default' :
-  b.status === 'CANCELLED' ? 'destructive' :
-  'secondary'
-} className="mt-1">
-  {b.status}
-</Badge>
-          </div>
-          {b.status === 'CONFIRMED' && (
-            <button onClick={() => handleComplete(b.id)} className="bg-slate-700 text-slate-100 text-sm px-3 py-1.5 rounded hover:bg-slate-600">
-              Mark Completed
-            </button>
-          )}
-        </div>
-      ))}
+ {bookings.map(b => (
+  <div key={b.id} className="bg-slate-800 border border-slate-700 rounded-lg p-4 flex justify-between items-center">
+    <div>
+      <p className="text-slate-100">{b.customer ? b.customer.name : b.guestName} — {b.service.name}</p>
+      <p className="text-slate-400 text-sm">{b.date.slice(0, 10)} at {b.startTime}</p>
+      <div className="flex gap-2 mt-1 items-center">
+        <Badge variant={
+          b.status === 'CONFIRMED' ? 'default' :
+          b.status === 'CANCELLED' ? 'destructive' :
+          b.status === 'NO_SHOW' ? 'destructive' :
+          'secondary'
+        }>
+          {b.status}
+        </Badge>
+        {isPastDue(b) && (
+          <Badge variant="outline" className="text-amber-400 border-amber-600">Past Due</Badge>
+        )}
+      </div>
+    </div>
+    {b.status === 'CONFIRMED' && (
+      <div className="flex gap-2">
+        <button onClick={() => handleComplete(b.id)} className="bg-slate-700 text-slate-100 text-sm px-3 py-1.5 rounded hover:bg-slate-600">
+          Mark Completed
+        </button>
+        <button onClick={() => handleNoShow(b.id)} className="bg-red-900 text-red-200 text-sm px-3 py-1.5 rounded hover:bg-red-800">
+          Mark No-Show
+        </button>
+      </div>
+    )}
+  </div>
+))}
     </div>
   </div>
 )

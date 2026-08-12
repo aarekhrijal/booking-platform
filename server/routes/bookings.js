@@ -4,6 +4,7 @@ const requireAuth = require('../middleware/requireAuth');
 const requireAdmin = require('../middleware/requireAdmin');
 const optionalAuth = require('../middleware/optionalAuth');
 const { timeToMinutes, minutesToTime } = require('../utils/time');
+const generateOtp = require('../utils/otp');
 
 const router = express.Router();
 
@@ -44,19 +45,20 @@ router.post('/', optionalAuth, async (req, res) => {
 
   if (hasConflict) return res.status(409).json({ error: 'This time slot is no longer available' });
 
-  const booking = await prisma.booking.create({
-    data: {
-      customerId: req.user ? req.user.userId : null,
-      serviceId: service.id,
-      date: new Date(date),
-      startTime,
-      endTime: minutesToTime(endMinutes),
-      totalPrice: service.price,
-      guestName: req.user ? null : guestName,
-      guestEmail: req.user ? null : guestEmail,
-      guestPhone: req.user ? null : guestPhone
-    }
-  });
+const booking = await prisma.booking.create({
+  data: {
+    customerId: req.user ? req.user.userId : null,
+    serviceId: service.id,
+    date: new Date(date),
+    startTime,
+    endTime: minutesToTime(endMinutes),
+    totalPrice: service.price,
+    guestName: req.user ? null : guestName,
+    guestEmail: req.user ? null : guestEmail,
+    guestPhone: req.user ? null : guestPhone,
+    otp: generateOtp()
+  }
+});
 
   res.status(201).json(booking);
 });
@@ -91,6 +93,14 @@ router.put('/:id/complete', requireAuth, requireAdmin, async (req, res) => {
   const updated = await prisma.booking.update({
     where: { id: Number(req.params.id) },
     data: { status: 'COMPLETED' }
+  });
+  res.json(updated);
+});
+
+router.put('/:id/no-show', requireAuth, requireAdmin, async (req, res) => {
+  const updated = await prisma.booking.update({
+    where: { id: Number(req.params.id) },
+    data: { status: 'NO_SHOW' }
   });
   res.json(updated);
 });

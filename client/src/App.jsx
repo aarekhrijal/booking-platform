@@ -39,7 +39,7 @@ function App() {
     <BrowserRouter>
     <Navbar user={user} onLogout={handleLogout} />
       <Routes>
-        <Route path="/" element={<HomePage user={user} onLogout={handleLogout} />} />
+       <Route path="/" element={user?.role === 'ADMIN' ? <AdminDashboardPage /> : <HomePage user={user} onLogout={handleLogout} />} />
         <Route path="/register" element={<RegisterPage onAuth={handleAuth} />} />
         <Route path="/login" element={<LoginPage onAuth={handleAuth} />} />
         <Route path="/book" element={<BookingPage />} />

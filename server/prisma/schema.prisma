@@ -53,6 +53,7 @@ model Booking {
   guestName   String?
   guestEmail  String?
   guestPhone  String?
+  otp         String
   createdAt   DateTime      @default(now())
 
   customer User?   @relation(fields: [customerId], references: [id])
@@ -64,6 +65,7 @@ enum BookingStatus {
   CONFIRMED
   CANCELLED
   COMPLETED
+  NO_SHOW
 }
 
 

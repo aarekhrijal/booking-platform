@@ -26,7 +26,7 @@ function HomePage({ user, onLogout }) {
     <div>
       <div
         className="relative h-[500px] bg-cover bg-center flex items-center justify-center"
-        style={{ backgroundImage: "url('/hero.jpg')" }}
+        style={{ backgroundImage: "url('/hero.png')" }}
       >
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative text-center px-6">
