@@ -3,13 +3,15 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import RegisterPage from './pages/RegisterPage'
 import LoginPage from './pages/LoginPage'
-import ServicesPage from './pages/ServicesPage'
 import BookingPage from './pages/BookingPage'
 import MyBookingsPage from './pages/MyBookingsPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
 import AdminServicesPage from './pages/AdminServicesPage'
 import AdminSchedulePage from './pages/AdminSchedulePage'
 import Navbar from './components/Navbar'
+import AboutPage from './pages/AboutPage'
+import ContactPage from './pages/ContactPage'
+import Footer from './components/Footer'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -45,8 +47,10 @@ function App() {
         <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/admin/services" element={<AdminServicesPage />} />
         <Route path="/admin/schedule" element={<AdminSchedulePage />} />
-        <Route path="/services" element={<ServicesPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   )
 }
