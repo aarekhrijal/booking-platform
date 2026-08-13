@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 function LookupBookingPage() {
   const [otp, setOtp] = useState('')
   const [booking, setBooking] = useState(null)
   const [error, setError] = useState('')
   const [cancelled, setCancelled] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   const handleLookup = async (e) => {
     e.preventDefault()
@@ -27,23 +29,27 @@ function LookupBookingPage() {
     setBooking(data)
   }
 
-  const handleCancel = async () => {
-    const response = await fetch('http://localhost:5000/api/bookings/lookup/cancel', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      bbody: JSON.stringify({ otp })
-    })
+const handleCancel = () => {
+  setConfirmOpen(true)
+}
 
-    const data = await response.json()
+const confirmCancel = async () => {
+  const response = await fetch('http://localhost:5000/api/bookings/lookup/cancel', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ otp })
+  })
 
-    if (!response.ok) {
-      setError(data.error)
-      return
-    }
+  const data = await response.json()
 
-    setBooking(data)
-    setCancelled(true)
+  if (!response.ok) {
+    setError(data.error)
+    return
   }
+
+  setBooking(data)
+  setCancelled(true)
+}
 
   return (
     <div className="max-w-md mx-auto px-6 py-16">
@@ -82,6 +88,13 @@ function LookupBookingPage() {
           )}
         </div>
       )}
+      <ConfirmDialog
+  open={confirmOpen}
+  onOpenChange={setConfirmOpen}
+  title="Cancel this booking?"
+  description="This action cannot be undone."
+  onConfirm={confirmCancel}
+/>
     </div>
   )
 }

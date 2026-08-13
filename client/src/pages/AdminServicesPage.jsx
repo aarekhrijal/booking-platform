@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 function AdminServicesPage() {
   const [services, setServices] = useState([])
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState({ name: '', description: '', duration: '', price: '' })
   const [newForm, setNewForm] = useState({ name: '', description: '', duration: '', price: '' })
+  const [confirmService, setConfirmService] = useState(null)
 
   const token = localStorage.getItem('token')
 
@@ -62,20 +64,28 @@ function AdminServicesPage() {
     loadServices()
   }
 
-  const toggleActive = async (service) => {
-    await fetch(`http://localhost:5000/api/services/${service.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify({
-        name: service.name,
-        description: service.description,
-        duration: service.duration,
-        price: service.price,
-        isActive: !service.isActive
-      })
-    })
-    loadServices()
+const toggleActive = async (service) => {
+  if (service.isActive) {
+    setConfirmService(service)
+    return
   }
+  await runToggle(service)
+}
+
+const runToggle = async (service) => {
+  await fetch(`http://localhost:5000/api/services/${service.id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({
+      name: service.name,
+      description: service.description,
+      duration: service.duration,
+      price: service.price,
+      isActive: !service.isActive
+    })
+  })
+  loadServices()
+}
 
 return (
   <div className="max-w-2xl mx-auto px-6 py-12">
@@ -125,6 +135,13 @@ return (
         </div>
       ))}
     </div>
+    <ConfirmDialog
+  open={confirmService !== null}
+  onOpenChange={(open) => !open && setConfirmService(null)}
+  title={`Deactivate "${confirmService?.name}"?`}
+  description="Customers won't be able to book this service anymore."
+  onConfirm={() => runToggle(confirmService)}
+/>
   </div>
 )
 }

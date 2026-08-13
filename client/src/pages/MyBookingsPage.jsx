@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Badge } from '@/components/ui/badge'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 function MyBookingsPage() {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
+  const [confirmId, setConfirmId] = useState(null)
 
   const loadBookings = () => {
     const token = localStorage.getItem('token')
@@ -21,14 +23,18 @@ function MyBookingsPage() {
     loadBookings()
   }, [])
 
-  const handleCancel = async (id) => {
-    const token = localStorage.getItem('token')
-    await fetch(`http://localhost:5000/api/bookings/${id}/cancel`, {
-      method: 'PUT',
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-    loadBookings()
-  }
+const handleCancel = (id) => {
+  setConfirmId(id)
+}
+
+const confirmCancel = async () => {
+  const token = localStorage.getItem('token')
+  await fetch(`http://localhost:5000/api/bookings/${confirmId}/cancel`, {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+  loadBookings()
+}
 
   if (loading) return <p>Loading your bookings...</p>
 
@@ -44,6 +50,7 @@ return (
           <div>
             <h3 className="text-slate-100 font-semibold">{booking.service.name}</h3>
             <p className="text-slate-400 text-sm">{booking.date.slice(0, 10)} at {booking.startTime}</p>
+                <p className="text-slate-500 text-xs mt-0.5">Code: <span className="font-mono text-slate-300">{booking.otp}</span></p>
             <Badge variant={
   booking.status === 'CONFIRMED' ? 'default' :
   booking.status === 'CANCELLED' ? 'destructive' :
@@ -60,6 +67,13 @@ return (
         </div>
       ))}
     </div>
+    <ConfirmDialog
+  open={confirmId !== null}
+  onOpenChange={(open) => !open && setConfirmId(null)}
+  title="Cancel this booking?"
+  description="This action cannot be undone."
+  onConfirm={confirmCancel}
+/>
   </div>
 )
 }

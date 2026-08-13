@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Badge } from '@/components/ui/badge'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 function AdminDashboardPage() {
   const [stats, setStats] = useState(null)
   const [bookings, setBookings] = useState([])
+  const [confirmAction, setConfirmAction] = useState(null)
 
   const token = localStorage.getItem('token')
 
@@ -34,8 +36,19 @@ function AdminDashboardPage() {
     loadData()
   }
 
-  const handleNoShow = async (id) => {
-  await fetch(`http://localhost:5000/api/bookings/${id}/no-show`, {
+const handleNoShow = (id) => {
+  setConfirmAction({ id, type: 'noshow' })
+}
+
+const handleCancel = (id) => {
+  setConfirmAction({ id, type: 'cancel' })
+}
+
+const runConfirmedAction = async () => {
+  const { id, type } = confirmAction
+  const endpoint = type === 'noshow' ? 'no-show' : 'cancel'
+
+  await fetch(`http://localhost:5000/api/bookings/${id}/${endpoint}`, {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${token}` }
   })
@@ -93,18 +106,31 @@ return (
       </div>
     </div>
     {b.status === 'CONFIRMED' && (
-      <div className="flex gap-2">
-        <button onClick={() => handleComplete(b.id)} className="bg-slate-700 text-slate-100 text-sm px-3 py-1.5 rounded hover:bg-slate-600">
-          Mark Completed
-        </button>
-        <button onClick={() => handleNoShow(b.id)} className="bg-red-900 text-red-200 text-sm px-3 py-1.5 rounded hover:bg-red-800">
-          Mark No-Show
-        </button>
-      </div>
-    )}
+  <div className="flex gap-2">
+    <button onClick={() => handleComplete(b.id)} className="bg-slate-700 text-slate-100 text-sm px-3 py-1.5 rounded hover:bg-slate-600">
+      Mark Completed
+    </button>
+    <button onClick={() => handleNoShow(b.id)} className="bg-red-900 text-red-200 text-sm px-3 py-1.5 rounded hover:bg-red-800">
+      Mark No-Show
+    </button>
+    <button onClick={() => handleCancel(b.id)} className="bg-slate-700 text-slate-300 text-sm px-3 py-1.5 rounded hover:bg-slate-600">
+      Cancel
+    </button>
+    <button onClick={() => handleCancel(b.id)} className="bg-slate-700 text-slate-300 text-sm px-3 py-1.5 rounded hover:bg-slate-600">
+  Cancel
+</button>
+  </div>
+)}
   </div>
 ))}
     </div>
+    <ConfirmDialog
+  open={confirmAction !== null}
+  onOpenChange={(open) => !open && setConfirmAction(null)}
+  title={confirmAction?.type === 'noshow' ? 'Mark this booking as a no-show?' : 'Cancel this booking?'}
+  description="This action cannot be undone."
+  onConfirm={runConfirmedAction}
+/>
   </div>
 )
 }
