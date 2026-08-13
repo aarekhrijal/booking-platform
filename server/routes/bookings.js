@@ -33,6 +33,14 @@ router.post('/', optionalAuth, async (req, res) => {
     return res.status(400).json({ error: 'Selected time is outside working hours' });
   }
 
+  const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kathmandu' }));
+const todayStr = now.toISOString().slice(0, 10);
+const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+if (date === todayStr && startMinutes < currentMinutes) {
+  return res.status(400).json({ error: 'This time has already passed' });
+}
+
   try {
     const booking = await prisma.$transaction(async (tx) => {
       const existingBookings = await tx.booking.findMany({
