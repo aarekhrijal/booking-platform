@@ -74,6 +74,10 @@ return (
     <div>
       <p className="text-slate-100">{b.customer ? b.customer.name : b.guestName} — {b.service.name}</p>
       <p className="text-slate-400 text-sm">{b.date.slice(0, 10)} at {b.startTime}</p>
+        <p className="text-slate-500 text-xs mt-0.5">Code: <span className="font-mono text-slate-300">{b.otp}</span></p>
+      <p className="text-slate-500 text-xs mt-0.5">
+  Booked on {b.createdAt.slice(0, 10)} at {b.createdAt.slice(11, 16)}
+</p>
       <div className="flex gap-2 mt-1 items-center">
         <Badge variant={
           b.status === 'CONFIRMED' ? 'default' :

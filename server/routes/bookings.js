@@ -33,34 +33,45 @@ router.post('/', optionalAuth, async (req, res) => {
     return res.status(400).json({ error: 'Selected time is outside working hours' });
   }
 
-  const existingBookings = await prisma.booking.findMany({
-    where: { date: new Date(date), status: { not: 'CANCELLED' } }
-  });
+  try {
+    const booking = await prisma.$transaction(async (tx) => {
+      const existingBookings = await tx.booking.findMany({
+        where: { date: new Date(date), status: { not: 'CANCELLED' } }
+      });
 
-  const hasConflict = existingBookings.some(booking => {
-    const bStart = timeToMinutes(booking.startTime);
-    const bEnd = timeToMinutes(booking.endTime);
-    return bStart < endMinutes && startMinutes < bEnd;
-  });
+      const hasConflict = existingBookings.some(booking => {
+        const bStart = timeToMinutes(booking.startTime);
+        const bEnd = timeToMinutes(booking.endTime);
+        return bStart < endMinutes && startMinutes < bEnd;
+      });
 
-  if (hasConflict) return res.status(409).json({ error: 'This time slot is no longer available' });
+      if (hasConflict) {
+        throw new Error('SLOT_TAKEN');
+      }
 
-const booking = await prisma.booking.create({
-  data: {
-    customerId: req.user ? req.user.userId : null,
-    serviceId: service.id,
-    date: new Date(date),
-    startTime,
-    endTime: minutesToTime(endMinutes),
-    totalPrice: service.price,
-    guestName: req.user ? null : guestName,
-    guestEmail: req.user ? null : guestEmail,
-    guestPhone: req.user ? null : guestPhone,
-    otp: generateOtp()
+      return tx.booking.create({
+        data: {
+          customerId: req.user ? req.user.userId : null,
+          serviceId: service.id,
+          date: new Date(date),
+          startTime,
+          endTime: minutesToTime(endMinutes),
+          totalPrice: service.price,
+          guestName: req.user ? null : guestName,
+          guestEmail: req.user ? null : guestEmail,
+          guestPhone: req.user ? null : guestPhone,
+          otp: generateOtp()
+        }
+      });
+    }, { isolationLevel: 'Serializable' });
+
+    res.status(201).json(booking);
+  } catch (err) {
+    if (err.message === 'SLOT_TAKEN' || err.code === 'P2034') {
+      return res.status(409).json({ error: 'This time slot is no longer available' });
+    }
+    throw err;
   }
-});
-
-  res.status(201).json(booking);
 });
 
 router.get('/my', requireAuth, async (req, res) => {

@@ -60,7 +60,6 @@ body: JSON.stringify({
     setConfirmation(data)
   }
 
-  // BookingPage.jsx — replace just the returned JSX (everything above it stays as-is)
 if (confirmation) {
   return (
     <div className="max-w-md mx-auto px-6 py-16 text-center">
@@ -69,6 +68,16 @@ if (confirmation) {
         <p className="text-slate-300">Date: {confirmation.date.slice(0, 10)}</p>
         <p className="text-slate-300">Time: {confirmation.startTime}</p>
         <p className="text-slate-300">Status: {confirmation.status}</p>
+      </div>
+
+      <div className="bg-amber-950 border border-amber-800 rounded-lg p-4 mt-4 text-left">
+        <p className="text-amber-200 text-sm font-medium">Your booking code:</p>
+        <p className="text-amber-100 text-3xl font-bold tracking-widest mt-1">
+          {confirmation.otp}
+        </p>
+        <p className="text-amber-300 text-sm mt-2">
+          Please save this code somewhere safe. You'll need to show it when you arrive for your appointment.
+        </p>
       </div>
     </div>
   )

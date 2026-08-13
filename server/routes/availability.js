@@ -21,16 +21,23 @@ router.get('/', async (req, res) => {
     where: { date: new Date(date), status: { not: 'CANCELLED' } }
   });
 
-  const slots = [];
-  for (let start = openMinutes; start + duration <= closeMinutes; start += 30) {
-    const end = start + duration;
-    const hasConflict = existingBookings.some(booking => {
-      const bStart = timeToMinutes(booking.startTime);
-      const bEnd = timeToMinutes(booking.endTime);
-      return bStart < end && start < bEnd;
-    });
-    if (!hasConflict) slots.push(minutesToTime(start));
-  }
+const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kathmandu' }));
+const todayStr = now.toISOString().slice(0, 10);
+const isToday = date === todayStr;
+const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+const slots = [];
+for (let start = openMinutes; start + duration <= closeMinutes; start += 30) {
+  if (isToday && start < currentMinutes) continue;
+
+  const end = start + duration;
+  const hasConflict = existingBookings.some(booking => {
+    const bStart = timeToMinutes(booking.startTime);
+    const bEnd = timeToMinutes(booking.endTime);
+    return bStart < end && start < bEnd;
+  });
+  if (!hasConflict) slots.push(minutesToTime(start));
+}
 
   res.json(slots);
 });

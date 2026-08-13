@@ -19,4 +19,15 @@ router.get('/stats', requireAuth, requireAdmin, async (req, res) => {
   res.json({ totalBookings, pendingBookings, cancelledBookings, revenue });
 });
 
+
+router.get('/users', requireAuth, requireAdmin, async (req, res) => {
+  const users = await prisma.user.findMany({
+    where: { role: 'CUSTOMER' },
+    include: { bookings: { include: { service: true } } },
+    orderBy: { createdAt: 'desc' }
+  });
+  res.json(users);
+});
+
+
 module.exports = router;

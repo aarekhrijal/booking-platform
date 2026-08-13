@@ -10,16 +10,17 @@ function Navbar({ user, onLogout }) {
       </Link>
 
       <div className="flex items-center gap-6">
-        {user?.role === 'ADMIN' ? (
-          <>
-            <Link to="/" className="hover:text-slate-300">Dashboard</Link>
-            <Link to="/admin/services" className="hover:text-slate-300">Manage Services</Link>
-            <Link to="/admin/schedule" className="hover:text-slate-300">Manage Schedule</Link>
-            <button onClick={() => { onLogout(); navigate('/') }} className="bg-slate-700 px-3 py-1.5 rounded hover:bg-slate-600">
-              Log out
-            </button>
-          </>
-        ) : user ? (
+{user?.role === 'ADMIN' ? (
+  <>
+    <Link to="/" className="hover:text-slate-300">Dashboard</Link>
+    <Link to="/admin/services" className="hover:text-slate-300">Manage Services</Link>
+    <Link to="/admin/schedule" className="hover:text-slate-300">Manage Schedule</Link>
+    <Link to="/admin/users" className="hover:text-slate-300">Users</Link>
+    <button onClick={() => { onLogout(); navigate('/') }} className="bg-slate-700 px-3 py-1.5 rounded hover:bg-slate-600">
+      Log out
+    </button>
+  </>
+) :  user ? (
           <>
             <Link to="/" className="hover:text-slate-300">Home</Link>
             <Link to="/about" className="hover:text-slate-300">About</Link>
