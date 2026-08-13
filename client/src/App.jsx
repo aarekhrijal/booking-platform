@@ -13,6 +13,7 @@ import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 import Footer from './components/Footer'
 import AdminUsersPage from './pages/AdminUsersPage'
+import LookupBookingPage from './pages/LookupBookingPage'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -50,6 +51,7 @@ function App() {
         <Route path="/admin/schedule" element={<AdminSchedulePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/find-booking" element={<LookupBookingPage />} />
         <Route path="/admin/users" element={<AdminUsersPage />} />
       </Routes>
       <Footer />

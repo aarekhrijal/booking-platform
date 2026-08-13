@@ -8,9 +8,7 @@ function BookingPage() {
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [confirmation, setConfirmation] = useState(null)
   const [error, setError] = useState('')
-  const [guestName, setGuestName] = useState('')
-const [guestEmail, setGuestEmail] = useState('')
-const [guestPhone, setGuestPhone] = useState('')
+const [guestName, setGuestName] = useState('')
 const isLoggedIn = !!localStorage.getItem('token')
 
   useEffect(() => {
@@ -44,9 +42,7 @@ body: JSON.stringify({
   serviceId: Number(selectedService),
   date,
   startTime: selectedSlot,
-  guestName,
-  guestEmail,
-  guestPhone
+  guestName
 })
     })
 
@@ -131,18 +127,6 @@ return (
       placeholder="Your Name"
       value={guestName}
       onChange={(e) => setGuestName(e.target.value)}
-      className="bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100"
-    />
-    <input
-      placeholder="Email"
-      value={guestEmail}
-      onChange={(e) => setGuestEmail(e.target.value)}
-      className="bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100"
-    />
-    <input
-      placeholder="Phone Number"
-      value={guestPhone}
-      onChange={(e) => setGuestPhone(e.target.value)}
       className="bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100"
     />
   </div>

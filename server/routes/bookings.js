@@ -5,15 +5,16 @@ const requireAdmin = require('../middleware/requireAdmin');
 const optionalAuth = require('../middleware/optionalAuth');
 const { timeToMinutes, minutesToTime } = require('../utils/time');
 const generateOtp = require('../utils/otp');
+const { bookingLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
 
-router.post('/', optionalAuth, async (req, res) => {
+router.post('/', bookingLimiter, optionalAuth, async (req, res) => {
   const { serviceId, date, startTime, guestName, guestEmail, guestPhone } = req.body;
 
-  if (!req.user && (!guestName || !guestEmail || !guestPhone)) {
-    return res.status(400).json({ error: 'Please provide your name, email, and phone number' });
-  }
+if (!req.user && !guestName) {
+  return res.status(400).json({ error: 'Please provide your name' });
+}
 
   const service = await prisma.service.findUnique({ where: { id: Number(serviceId) } });
   if (!service) return res.status(404).json({ error: 'Service not found' });
@@ -66,8 +67,8 @@ if (date === todayStr && startMinutes < currentMinutes) {
           endTime: minutesToTime(endMinutes),
           totalPrice: service.price,
           guestName: req.user ? null : guestName,
-          guestEmail: req.user ? null : guestEmail,
-          guestPhone: req.user ? null : guestPhone,
+guestEmail: null,
+guestPhone: null,
           otp: generateOtp()
         }
       });

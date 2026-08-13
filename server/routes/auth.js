@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const prisma = require('../prisma-client/client');
 const requireAuth = require('../middleware/requireAuth');
+const { authLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ router.post('/register', async (req, res) => {
   });
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', authLimiter, async (req, res) => {
   const { email, password } = req.body;
 
   const user = await prisma.user.findUnique({ where: { email } });

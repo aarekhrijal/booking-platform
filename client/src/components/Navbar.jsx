@@ -37,6 +37,7 @@ function Navbar({ user, onLogout }) {
             <Link to="/about" className="hover:text-slate-300">About</Link>
             <Link to="/contact" className="hover:text-slate-300">Contact</Link>
             <Link to="/book" className="bg-blue-600 px-3 py-1.5 rounded hover:bg-blue-500">Book Now</Link>
+            <Link to="/find-booking" className="hover:text-slate-300">Find My Booking</Link>
             <Link to="/login" className="hover:text-slate-300">Log In</Link>
             <Link to="/register" className="bg-white text-slate-900 px-3 py-1.5 rounded hover:bg-slate-200">Register</Link>
           </>
