@@ -94,9 +94,18 @@ router.get('/my', requireAuth, async (req, res) => {
 router.put('/:id/cancel', requireAuth, async (req, res) => {
   const booking = await prisma.booking.findUnique({ where: { id: Number(req.params.id) } });
   if (!booking) return res.status(404).json({ error: 'Booking not found' });
-  if (booking.customerId !== req.user.userId) return res.status(403).json({ error: 'This is not your booking' });
 
-  const updated = await prisma.booking.update({ where: { id: booking.id }, data: { status: 'CANCELLED' } });
+  const isOwner = booking.customerId === req.user.userId;
+  const isAdmin = req.user.role === 'ADMIN';
+
+  if (!isOwner && !isAdmin) {
+    return res.status(403).json({ error: 'This is not your booking' });
+  }
+
+  const updated = await prisma.booking.update({
+    where: { id: booking.id },
+    data: { status: 'CANCELLED', cancelledBy: isAdmin ? 'admin' : 'customer' }
+  });
   res.json(updated);
 });
 

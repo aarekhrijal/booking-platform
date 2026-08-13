@@ -54,6 +54,7 @@ model Booking {
   guestEmail  String?
   guestPhone  String?
   otp         String
+  cancelledBy String?
   createdAt   DateTime      @default(now())
 
   customer User?   @relation(fields: [customerId], references: [id])

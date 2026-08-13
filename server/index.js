@@ -24,9 +24,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/schedule', scheduleRoutes);
 app.use('/api/availability', availabilityRoutes);
+app.use('/api/bookings/lookup', lookupRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/bookings/lookup', lookupRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
