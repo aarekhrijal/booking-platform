@@ -14,6 +14,7 @@ import ContactPage from './pages/ContactPage'
 import Footer from './components/Footer'
 import AdminUsersPage from './pages/AdminUsersPage'
 import LookupBookingPage from './pages/LookupBookingPage'
+import ProfilePage from './pages/ProfilePage'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -52,7 +53,9 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/find-booking" element={<LookupBookingPage />} />
+        <Route path="/profile" element={<ProfilePage user={user} setUser={setUser} />} />
         <Route path="/admin/users" element={<AdminUsersPage />} />
+        <Route path="/profile" element={<ProfilePage user={user} setUser={setUser} onLogout={handleLogout} />} />
       </Routes>
       <Footer />
     </BrowserRouter>

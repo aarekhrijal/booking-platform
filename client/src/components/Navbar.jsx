@@ -16,9 +16,7 @@ function Navbar({ user, onLogout }) {
     <Link to="/admin/services" className="hover:text-slate-300">Manage Services</Link>
     <Link to="/admin/schedule" className="hover:text-slate-300">Manage Schedule</Link>
     <Link to="/admin/users" className="hover:text-slate-300">Users</Link>
-    <button onClick={() => { onLogout(); navigate('/') }} className="bg-slate-700 px-3 py-1.5 rounded hover:bg-slate-600">
-      Log out
-    </button>
+    <Link to="/profile" className="hover:text-slate-300">Profile</Link>
   </>
 ) :  user ? (
           <>
@@ -27,9 +25,7 @@ function Navbar({ user, onLogout }) {
             <Link to="/contact" className="hover:text-slate-300">Contact</Link>
             <Link to="/book" className="bg-blue-600 px-3 py-1.5 rounded hover:bg-blue-500">Book Now</Link>
             <Link to="/my-bookings" className="hover:text-slate-300">My Bookings</Link>
-            <button onClick={() => { onLogout(); navigate('/') }} className="bg-slate-700 px-3 py-1.5 rounded hover:bg-slate-600">
-              Log out
-            </button>
+            <Link to="/profile" className="hover:text-slate-300">Profile</Link>
           </>
         ) : (
           <>

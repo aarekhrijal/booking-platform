@@ -45,4 +45,43 @@ router.get('/me', requireAuth, (req, res) => {
   res.json({ userId: req.user.userId, role: req.user.role });
 });
 
+
+router.put('/profile', requireAuth, async (req, res) => {
+  const { name, email } = req.body;
+
+  if (email) {
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing && existing.id !== req.user.userId) {
+      return res.status(400).json({ error: 'That email is already in use' });
+    }
+  }
+
+  const updated = await prisma.user.update({
+    where: { id: req.user.userId },
+    data: { name, email }
+  });
+
+  res.json({ id: updated.id, name: updated.name, email: updated.email, role: updated.role });
+});
+
+router.put('/password', requireAuth, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  const user = await prisma.user.findUnique({ where: { id: req.user.userId } });
+  const matches = await bcrypt.compare(currentPassword, user.password);
+
+  if (!matches) {
+    return res.status(401).json({ error: 'Current password is incorrect' });
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { password: hashedPassword }
+  });
+
+  res.json({ message: 'Password updated successfully' });
+});
+
+
 module.exports = router;
