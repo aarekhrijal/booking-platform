@@ -114,20 +114,28 @@ function HomePage({ user }) {
 
     <div className="grid gap-6 md:grid-cols-3 mt-10">
       {services.map(service => (
-        <div key={service.id} className="bg-zinc-900 border border-white/10 rounded-lg p-6 hover:border-amber-400/40 transition-colors">
-          <div className="w-12 h-12 rounded-full border border-amber-400/40 flex items-center justify-center text-amber-400">
-            ✂
-          </div>
-          <h3 className="text-white font-semibold mt-4">{service.name}</h3>
+  <div key={service.id} className="bg-zinc-900 border border-white/10 rounded-lg overflow-hidden hover:border-amber-400/40 transition-colors">
+    {service.imageUrl ? (
+      <img src={service.imageUrl} alt={service.name} className="w-full h-40 object-cover" />
+    ) : (
+      <div className="w-full h-40 bg-zinc-800 flex items-center justify-center text-amber-400 text-3xl">
+        ✂
+      </div>
+    )}
+    <div className="p-6">
+      <h3 className="text-white font-semibold">{service.name}</h3>
           <p className="text-slate-400 text-sm mt-1">{service.description}</p>
           <p className="text-amber-400 mt-4 font-medium">{service.duration} min — NPR {service.price}</p>
           <Link to="/book" className="text-white/70 hover:text-amber-400 text-sm mt-3 inline-block">
             Book Now →
           </Link>
+          
         </div>
+      </div>
       ))}
     </div>
   </div>
+  
 </div>
 
 {/* Barbers */}
@@ -174,13 +182,19 @@ function HomePage({ user }) {
 </div>
 
 {/* Special Offer CTA */}
-<div className="bg-gradient-to-r from-amber-500 to-amber-400 py-16 text-center px-6">
-  <p className="text-black/70 text-sm font-semibold tracking-widest">10% OFF YOUR FIRST VISIT</p>
-  <h2 className="font-heading text-3xl font-bold text-black mt-2">Look Good. Feel Confident.</h2>
-  <p className="text-black/70 mt-2">Your next great look is only one appointment away.</p>
-  <Link to="/book" className="inline-block mt-6 bg-black text-amber-400 px-6 py-3 rounded font-medium hover:bg-zinc-900">
-    Book Your Appointment →
-  </Link>
+<div
+  className="relative py-24 text-center px-6 bg-cover bg-center"
+  style={{ backgroundImage: "url('/cta-bg.png')" }}
+>
+  <div className="absolute inset-0 bg-black/70" />
+  <div className="relative">
+    <p className="text-amber-400 text-sm font-semibold tracking-widest">10% OFF YOUR FIRST VISIT</p>
+    <h2 className="font-heading text-3xl font-bold text-white mt-2">Look Good. Feel Confident.</h2>
+    <p className="text-slate-300 mt-2">Your next great look is only one appointment away.</p>
+    <Link to="/book" className="inline-block mt-6 bg-amber-400 text-black px-6 py-3 rounded font-medium hover:bg-amber-300">
+      Book Your Appointment →
+    </Link>
+  </div>
 </div>
 
 {/* Location + Hours */}

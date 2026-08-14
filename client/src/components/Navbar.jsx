@@ -3,9 +3,6 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 const CUSTOMER_LINKS = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About Us' },
-  { to: '/#services', label: 'Services' },
-  { to: '/#barbers', label: 'Barbers' },
-  { to: '/#reviews', label: 'Reviews' },
   { to: '/contact', label: 'Contact' },
 ]
 
