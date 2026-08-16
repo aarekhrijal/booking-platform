@@ -15,6 +15,13 @@ import Footer from './components/Footer'
 import AdminUsersPage from './pages/AdminUsersPage'
 import LookupBookingPage from './pages/LookupBookingPage'
 import ProfilePage from './pages/ProfilePage'
+import AdminBarbersPage from './pages/AdminBarbersPage'
+import GalleryPage from './pages/GalleryPage'
+import AdminGalleryPage from './pages/AdminGalleryPage'
+import ScrollToTop from './components/ScrollToTop'
+
+
+
 
 function App() {
   const [user, setUser] = useState(null)
@@ -40,13 +47,14 @@ function App() {
 
   return (
     <BrowserRouter>
+        <ScrollToTop />
     <Navbar user={user} onLogout={handleLogout} />
       <Routes>
        <Route path="/" element={user?.role === 'ADMIN' ? <AdminDashboardPage /> : <HomePage user={user} onLogout={handleLogout} />} />
         <Route path="/register" element={<RegisterPage onAuth={handleAuth} />} />
         <Route path="/login" element={<LoginPage onAuth={handleAuth} />} />
         <Route path="/book" element={<BookingPage />} />
-        <Route path="/my-bookings" element={<MyBookingsPage />} />
+<Route path="/my-bookings" element={<MyBookingsPage user={user} />} />
         <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/admin/services" element={<AdminServicesPage />} />
         <Route path="/admin/schedule" element={<AdminSchedulePage />} />
@@ -54,7 +62,11 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/find-booking" element={<LookupBookingPage />} />
         <Route path="/admin/users" element={<AdminUsersPage />} />
+        <Route path="/admin/barbers" element={<AdminBarbersPage />} />
         <Route path="/profile" element={<ProfilePage user={user} setUser={setUser} onLogout={handleLogout} />} />
+        <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/admin/gallery" element={<AdminGalleryPage />} />
+        
       </Routes>
       <Footer />
     </BrowserRouter>

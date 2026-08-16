@@ -10,8 +10,7 @@ const { bookingLimiter } = require('../middleware/rateLimiter');
 const router = express.Router();
 
 router.post('/', bookingLimiter, optionalAuth, async (req, res) => {
-  const { serviceId, date, startTime, guestName, guestEmail, guestPhone } = req.body;
-
+const { serviceId, date, startTime, guestName, guestEmail, guestPhone, barberId } = req.body;
 if (!req.user && !guestName) {
   return res.status(400).json({ error: 'Please provide your name' });
 }
@@ -62,6 +61,7 @@ if (date === todayStr && startMinutes < currentMinutes) {
         data: {
           customerId: req.user ? req.user.userId : null,
           serviceId: service.id,
+          barberId: barberId ? Number(barberId) : null,
           date: new Date(date),
           startTime,
           endTime: minutesToTime(endMinutes),

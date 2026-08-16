@@ -11,6 +11,8 @@ const dashboardRoutes = require('./routes/dashboard');
 const lookupRoutes = require('./routes/lookup');
 const uploadRoutes = require('./routes/upload');
 const barberRoutes = require('./routes/barbers');
+const galleryRoutes = require('./routes/gallery');
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,6 +33,7 @@ app.use('/api/bookings/lookup', lookupRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/barbers', barberRoutes);
+app.use('/api/gallery', galleryRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

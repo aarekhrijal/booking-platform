@@ -46,8 +46,9 @@ router.get('/me', requireAuth, (req, res) => {
 });
 
 
+
 router.put('/profile', requireAuth, async (req, res) => {
-  const { name, email } = req.body;
+  const { name, email, photoUrl } = req.body;
 
   if (email) {
     const existing = await prisma.user.findUnique({ where: { email } });
@@ -56,12 +57,12 @@ router.put('/profile', requireAuth, async (req, res) => {
     }
   }
 
-  const updated = await prisma.user.update({
+const updated = await prisma.user.update({
     where: { id: req.user.userId },
-    data: { name, email }
+    data: { name, email, photoUrl }
   });
 
-  res.json({ id: updated.id, name: updated.name, email: updated.email, role: updated.role });
+  res.json({ id: updated.id, name: updated.name, email: updated.email, role: updated.role, photoUrl: updated.photoUrl });
 });
 
 router.put('/password', requireAuth, async (req, res) => {
