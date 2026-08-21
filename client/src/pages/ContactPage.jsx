@@ -1,3 +1,4 @@
+import { API_URL } from '../config'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -11,7 +12,7 @@ function ContactPage() {
   const [submitted, setSubmitted] = useState(false)
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/schedule/working-hours')
+    fetch(`${API_URL}/api/schedule/working-hours`)
       .then(res => res.json())
       .then(setHours)
   }, [])

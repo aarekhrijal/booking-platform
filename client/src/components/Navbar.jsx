@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 
 const CUSTOMER_LINKS_GUEST = [
@@ -29,64 +30,108 @@ function ProfileIcon() {
 function Navbar({ user, onLogout }) {
   const navigate = useNavigate()
   const location = useLocation()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const links = user ? CUSTOMER_LINKS_LOGGED_IN : CUSTOMER_LINKS_GUEST
+
+  const closeMenu = () => setMenuOpen(false)
 
   return (
     <nav className="sticky top-0 z-50 bg-black/60 backdrop-blur-md border-b border-amber-400/20">
       <div className="w-full px-6 py-2.5 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2" onClick={closeMenu}>
           <img src="/logo.png" alt="Rijal's Handsome Parlor" className="h-10" />
         </Link>
 
-        {user?.role === 'ADMIN' ? (
-          <>
-            <div className="flex items-center gap-6">
-              <Link to="/" className="text-white/80 hover:text-amber-400 text-sm">Dashboard</Link>
-              <Link to="/admin/services" className="text-white/80 hover:text-amber-400 text-sm">Services</Link>
-              <Link to="/admin/schedule" className="text-white/80 hover:text-amber-400 text-sm">Schedule</Link>
-              <Link to="/admin/barbers" className="text-white/80 hover:text-amber-400 text-sm">Barbers</Link>
-              <Link to="/admin/users" className="text-white/80 hover:text-amber-400 text-sm">Users</Link>
-              <Link to="/admin/gallery" className="text-white/80 hover:text-amber-400 text-sm">Gallery</Link>
-            </div>
-            <ProfileIcon />
-          </>
-        ) : (
-          <>
-            <div className="flex items-center gap-6">
-              {links.map(link => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className={`pb-0.5 border-b-2 text-sm whitespace-nowrap transition-colors ${
-                    location.pathname === link.to
-                      ? 'text-amber-400 border-amber-400'
-                      : 'text-white/80 border-transparent hover:text-amber-400'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
+        {/* Desktop nav — hidden below md */}
+        <div className="hidden md:flex items-center gap-6">
+          {links.map(link => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`pb-0.5 border-b-2 text-sm whitespace-nowrap transition-colors ${
+                location.pathname === link.to
+                  ? 'text-amber-400 border-amber-400'
+                  : 'text-white/80 border-transparent hover:text-amber-400'
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
 
-            <div className="flex items-center gap-4">
-              {user ? (
-                <ProfileIcon />
-              ) : (
-                <Link to="/login" className="text-white/80 hover:text-amber-400 text-sm">Log In</Link>
-              )}
-              <Link
-                to="/book"
-                className="flex items-center gap-2 border border-amber-400/50 text-amber-400 px-3 py-1.5 rounded hover:bg-amber-400 hover:text-black transition-colors text-sm whitespace-nowrap"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                  <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1V3a1 1 0 0 1 1-1zM4 10v10h16V10H4z" />
-                </svg>
-                Book Appointment
-              </Link>
-            </div>
-          </>
-        )}
+        <div className="hidden md:flex items-center gap-4">
+          {user ? (
+            <ProfileIcon />
+          ) : (
+            <Link to="/login" className="text-white/80 hover:text-amber-400 text-sm">Log In</Link>
+          )}
+          <Link
+            to="/book"
+            className="flex items-center gap-2 border border-amber-400/50 text-amber-400 px-3 py-1.5 rounded hover:bg-amber-400 hover:text-black transition-colors text-sm whitespace-nowrap"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+              <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1V3a1 1 0 0 1 1-1zM4 10v10h16V10H4z" />
+            </svg>
+            Book Appointment
+          </Link>
+        </div>
+
+                {/* Mobile: hamburger button — hidden md and up */}
+        <button
+          onClick={() => setMenuOpen(true)}
+          className="md:hidden text-white p-2"
+          aria-label="Open menu"
+        >
+          ☰
+        </button>
+      </div>
+
+      {/* Mobile overlay + slide-in drawer */}
+      <div
+        className={`md:hidden fixed inset-0 bg-black/70 z-50 transition-opacity duration-300 ${
+          menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={closeMenu}
+      />
+
+               <div
+        className={`md:hidden fixed top-0 right-0 bottom-0 w-72 bg-zinc-950 border-l border-white/10 z-[60] transform transition-transform duration-300 ${
+          menuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="flex justify-between items-center p-5 border-b border-white/10">
+          <img src="/logo.png" alt="Rijal's Handsome Parlor" className="h-8" />
+          <button onClick={closeMenu} className="text-white text-xl" aria-label="Close menu">✕</button>
+        </div>
+
+        <div className="flex flex-col gap-4 p-5">
+          {links.map(link => (
+            <Link
+              key={link.to}
+              to={link.to}
+              onClick={closeMenu}
+              className={`text-sm ${location.pathname === link.to ? 'text-amber-400' : 'text-white/80'}`}
+            >
+              {link.label}
+            </Link>
+          ))}
+
+          <div className="border-t border-white/10 pt-4 flex flex-col gap-4">
+            {user ? (
+              <Link to="/profile" onClick={closeMenu} className="text-white/80 text-sm">My Profile</Link>
+            ) : (
+              <Link to="/login" onClick={closeMenu} className="text-white/80 text-sm">Log In</Link>
+            )}
+            <Link
+              to="/book"
+              onClick={closeMenu}
+              className="bg-amber-400 text-black text-center rounded px-4 py-2.5 font-medium text-sm"
+            >
+              Book Appointment
+            </Link>
+          </div>
+        </div>
       </div>
     </nav>
   )

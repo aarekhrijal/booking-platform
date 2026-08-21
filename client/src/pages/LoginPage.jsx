@@ -1,3 +1,4 @@
+import { API_URL } from '../config'
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
@@ -11,7 +12,7 @@ function LoginPage({ onAuth }) {
     e.preventDefault()
     setError('')
 
-    const response = await fetch('http://localhost:5000/api/auth/login', {
+    const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })

@@ -1,3 +1,4 @@
+import { API_URL } from '../config'
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -32,7 +33,7 @@ function LookupBookingPage() {
     setError('')
     setBooking(null)
 
-    const response = await fetch('http://localhost:5000/api/bookings/lookup', {
+    const response = await fetch(`${API_URL}/api/bookings/lookup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ otp })
@@ -51,7 +52,7 @@ function LookupBookingPage() {
   const handleCancel = async () => {
     if (!window.confirm('Cancel this booking?')) return
 
-    const response = await fetch('http://localhost:5000/api/bookings/lookup/cancel', {
+    const response = await fetch(`${API_URL}/api/bookings/lookup/cancel`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ otp })

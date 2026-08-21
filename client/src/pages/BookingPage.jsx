@@ -1,3 +1,4 @@
+import { API_URL } from '../config'
 import { useState, useEffect } from 'react'
 
 const STEPS = [
@@ -24,8 +25,8 @@ function BookingPage() {
   const isLoggedIn = !!localStorage.getItem('token')
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/services').then(res => res.json()).then(setServices)
-    fetch('http://localhost:5000/api/barbers').then(res => res.json()).then(setBarbers)
+    fetch(`${API_URL}/api/services`).then(res => res.json()).then(setServices)
+    fetch(`${API_URL}/api/barbers`).then(res => res.json()).then(setBarbers)
   }, [])
 
   useEffect(() => {
@@ -33,7 +34,7 @@ function BookingPage() {
       setSlots([])
       return
     }
-    fetch(`http://localhost:5000/api/availability?date=${date}&serviceId=${selectedService.id}`)
+    fetch(`${API_URL}/api/availability?date=${date}&serviceId=${selectedService.id}`)
       .then(res => res.json())
       .then(setSlots)
   }, [selectedService, date])
@@ -50,7 +51,7 @@ function BookingPage() {
     setError('')
     const token = localStorage.getItem('token')
 
-    const response = await fetch('http://localhost:5000/api/bookings', {
+    const response = await fetch(`${API_URL}/api/bookings`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

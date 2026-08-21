@@ -19,9 +19,7 @@ import AdminBarbersPage from './pages/AdminBarbersPage'
 import GalleryPage from './pages/GalleryPage'
 import AdminGalleryPage from './pages/AdminGalleryPage'
 import ScrollToTop from './components/ScrollToTop'
-
-
-
+import AdminBookingsPage from './pages/AdminBookingsPage'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -47,32 +45,29 @@ function App() {
 
   return (
     <BrowserRouter>
-        <ScrollToTop />
-    <Navbar user={user} onLogout={handleLogout} />
+      <ScrollToTop />
+      {user?.role !== 'ADMIN' && <Navbar user={user} onLogout={handleLogout} />}
       <Routes>
-       <Route path="/" element={user?.role === 'ADMIN' ? <AdminDashboardPage /> : <HomePage user={user} onLogout={handleLogout} />} />
+        <Route path="/" element={user?.role === 'ADMIN' ? <AdminDashboardPage user={user} onLogout={handleLogout} /> :
+         <HomePage user={user} onLogout={handleLogout} />} />
         <Route path="/register" element={<RegisterPage onAuth={handleAuth} />} />
         <Route path="/login" element={<LoginPage onAuth={handleAuth} />} />
         <Route path="/book" element={<BookingPage />} />
-<Route path="/my-bookings" element={<MyBookingsPage user={user} />} />
-        <Route path="/admin" element={<AdminDashboardPage />} />
-        <Route path="/admin/services" element={<AdminServicesPage />} />
-        <Route path="/admin/schedule" element={<AdminSchedulePage />} />
+        <Route path="/my-bookings" element={<MyBookingsPage user={user} />} />
+<Route path="/admin/services" element={<AdminServicesPage user={user} onLogout={handleLogout} />} />    
+<Route path="/admin/schedule" element={<AdminSchedulePage user={user} onLogout={handleLogout} />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/find-booking" element={<LookupBookingPage />} />
-        <Route path="/admin/users" element={<AdminUsersPage />} />
-        <Route path="/admin/barbers" element={<AdminBarbersPage />} />
-        <Route path="/profile" element={<ProfilePage user={user} setUser={setUser} onLogout={handleLogout} />} />
+<Route path="/admin/users" element={<AdminUsersPage user={user} onLogout={handleLogout} />} />
+<Route path="/admin/barbers" element={<AdminBarbersPage user={user} onLogout={handleLogout} />} />     
+   <Route path="/profile" element={<ProfilePage user={user} setUser={setUser} onLogout={handleLogout} />} />
         <Route path="/gallery" element={<GalleryPage />} />
-        <Route path="/admin/gallery" element={<AdminGalleryPage />} />
-        
+<Route path="/admin/gallery" element={<AdminGalleryPage user={user} onLogout={handleLogout} />} />
+        <Route path="/admin/bookings" element={<AdminBookingsPage user={user} onLogout={handleLogout} />} />
       </Routes>
-      <Footer />
-    </BrowserRouter>
+{user?.role !== 'ADMIN' && <Footer />}    </BrowserRouter>
   )
 }
-
-
 
 export default App

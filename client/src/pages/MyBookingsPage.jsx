@@ -1,3 +1,4 @@
+import { API_URL } from '../config'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
@@ -13,7 +14,7 @@ function MyBookingsPage({ user }) {
 
   const loadBookings = () => {
     const token = localStorage.getItem('token')
-    fetch('http://localhost:5000/api/bookings/my', {
+    fetch(`${API_URL}/api/bookings/my`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -29,7 +30,7 @@ function MyBookingsPage({ user }) {
 
   const confirmCancel = async () => {
     const token = localStorage.getItem('token')
-    await fetch(`http://localhost:5000/api/bookings/${confirmId}/cancel`, {
+    await fetch(`${API_URL}/api/bookings/${confirmId}/cancel`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}` }
     })

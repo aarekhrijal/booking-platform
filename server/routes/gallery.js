@@ -7,6 +7,14 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   const images = await prisma.galleryImage.findMany({
+    where: { isActive: true },
+    orderBy: { order: 'asc' }
+  });
+  res.json(images);
+});
+
+router.get('/all', requireAuth, requireAdmin, async (req, res) => {
+  const images = await prisma.galleryImage.findMany({
     orderBy: { order: 'asc' }
   });
   res.json(images);
@@ -25,10 +33,10 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
 });
 
 router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
-  const { imageUrl, category, caption, order } = req.body;
+  const { imageUrl, category, caption, order, isActive } = req.body;
   const image = await prisma.galleryImage.update({
     where: { id: Number(req.params.id) },
-    data: { imageUrl, category, caption, order }
+    data: { imageUrl, category, caption, order, isActive }
   });
   res.json(image);
 });

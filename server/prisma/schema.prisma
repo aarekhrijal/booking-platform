@@ -24,6 +24,7 @@ model Service {
   id          Int      @id @default(autoincrement())
   name        String
   description String?
+  category    String   @default("General")
   duration    Int
   price       Float
   isActive    Boolean  @default(true)
@@ -84,6 +85,7 @@ model GalleryImage {
   category  String
   caption   String?
   order     Int      @default(0)
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 }
 

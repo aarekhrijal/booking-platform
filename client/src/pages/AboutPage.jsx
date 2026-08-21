@@ -1,3 +1,4 @@
+import { API_URL } from '../config'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -31,7 +32,7 @@ function AboutPage() {
   const [barbers, setBarbers] = useState([])
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/barbers')
+    fetch(`${API_URL}/api/barbers`)
       .then(res => res.json())
       .then(setBarbers)
   }, [])

@@ -11,8 +11,8 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', requireAuth, requireAdmin, async (req, res) => {
-  const { name, description, duration, price, imageUrl } = req.body;
-  const service = await prisma.service.create({ data: { name, description, duration, price, imageUrl } });
+  const { name, description, category, duration, price, imageUrl } = req.body;
+  const service = await prisma.service.create({ data: { name, description, category, duration, price, imageUrl } });
   res.status(201).json(service);
 });
 
@@ -23,10 +23,10 @@ router.get('/all', requireAuth, requireAdmin, async (req, res) => {
 });
 
 router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
-  const { name, description, duration, price, isActive, imageUrl } = req.body;
+  const { name, description, category, duration, price, isActive, imageUrl } = req.body;
   const service = await prisma.service.update({
     where: { id: Number(req.params.id) },
-    data: { name, description, duration, price, isActive, imageUrl }
+    data: { name, description, category, duration, price, isActive, imageUrl }
   });
   res.json(service);
 });

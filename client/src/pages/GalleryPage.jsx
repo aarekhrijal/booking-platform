@@ -1,3 +1,4 @@
+import { API_URL } from '../config'
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -62,7 +63,7 @@ function GalleryPage() {
   const [activeFilter, setActiveFilter] = useState('All')
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/gallery')
+    fetch(`${API_URL}/api/gallery`)
       .then(res => res.json())
       .then(setImages)
   }, [])

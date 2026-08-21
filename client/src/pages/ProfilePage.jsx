@@ -1,3 +1,4 @@
+import { API_URL } from '../config'
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -29,7 +30,7 @@ function ProfilePage({ user, setUser, onLogout }) {
   }, [user])
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/bookings/my', {
+    fetch(`${API_URL}/api/bookings/my`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -56,7 +57,7 @@ function ProfilePage({ user, setUser, onLogout }) {
     const formData = new FormData()
     formData.append('image', file)
 
-    const response = await fetch('http://localhost:5000/api/upload', {
+    const response = await fetch(`${API_URL}/api/upload`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${token}` },
       body: formData
@@ -72,7 +73,7 @@ function ProfilePage({ user, setUser, onLogout }) {
     setProfileError('')
     setProfileSuccess('')
 
-    const response = await fetch('http://localhost:5000/api/auth/profile', {
+    const response = await fetch(`${API_URL}/api/auth/profile`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ name, email, photoUrl })
@@ -95,7 +96,7 @@ function ProfilePage({ user, setUser, onLogout }) {
     setPasswordError('')
     setPasswordSuccess('')
 
-    const response = await fetch('http://localhost:5000/api/auth/password', {
+    const response = await fetch(`${API_URL}/api/auth/password`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ currentPassword, newPassword })

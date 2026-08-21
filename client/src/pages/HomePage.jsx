@@ -1,3 +1,4 @@
+import { API_URL } from '../config'
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -38,11 +39,11 @@ function HomePage({ user }) {
   const location = useLocation()
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/services')
+    fetch(`${API_URL}/api/services`)
       .then(res => res.json())
       .then(setServices)
 
-    fetch('http://localhost:5000/api/schedule/working-hours')
+    fetch(`${API_URL}/api/schedule/working-hours`)
       .then(res => res.json())
       .then(setHours)
   }, [])
